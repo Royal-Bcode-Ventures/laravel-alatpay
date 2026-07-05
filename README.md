@@ -5,7 +5,7 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE.md)
 [![PHP Version](https://img.shields.io/badge/php-%5E8.1-777bb4)](composer.json)
 
-An independent, open-source Laravel SDK for integrating **ALATPay** (a payment product by Wema Bank) into your Laravel application — virtual account bank transfers, USSD (Pay-with-Phone), Pay-with-Account-Number direct debit, and Static Wallets.
+An independent, open-source Laravel SDK for integrating **ALATPay** (a payment product by Wema Bank) into your Laravel application with virtual account bank transfers, USSD (Pay-with-Phone), Pay-with-Account-Number direct debit, and Static Wallets.
 
 > **Disclaimer:** This package is an independent, community-built SDK. It is **not affiliated with, endorsed by, or maintained by Wema Bank PLC or ALATPay**. It simply wraps their publicly documented HTTP API for convenient use inside Laravel applications.
 
@@ -287,7 +287,7 @@ Released under the [MIT License](LICENSE.md).
 ## Credits
 
 Developed and maintained by **Royal Bcode Ventures Ltd**
-Lead Developer: **Gift Balogun** — [royalbv.name.ng](https://royalbv.name.ng)
-GitHub: [github.com/Royal-Bcode-Ventures](https://github.com/Royal-Bcode-Ventures)
+Lead Developer: **Gift Balogun** — [giftbalogun.name.ng](https://giftbalogun.name.ng)
+GitHub: [github.com/Royal-Bcode-Ventures](https://github.com/giftbalogun)
 
 This is an independent open-source project built for developer education and portfolio purposes. It is not affiliated with, endorsed by, or sponsored by Wema Bank PLC or ALATPay.
