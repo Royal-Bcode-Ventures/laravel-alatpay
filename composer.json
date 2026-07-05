@@ -1,0 +1,65 @@
+{
+    "name": "royalbcode/laravel-alatpay",
+    "description": "An independent, open-source Laravel SDK for integrating ALATPay (by Wema Bank) payment services: bank transfer, USSD, account-number debit and static wallets.",
+    "keywords": ["laravel", "alatpay", "wema bank", "payment gateway", "nigeria", "bank transfer", "ussd", "static wallet"],
+    "homepage": "https://github.com/Royal-Bcode-Ventures/laravel-alatpay",
+    "license": "MIT",
+    "type": "library",
+    "support": {
+        "issues": "https://github.com/Royal-Bcode-Ventures/laravel-alatpay/issues",
+        "source": "https://github.com/Royal-Bcode-Ventures/laravel-alatpay"
+    },
+    "authors": [
+        {
+            "name": "Gift Balogun",
+            "homepage": "https://royalbv.name.ng",
+            "role": "Lead Developer"
+        },
+        {
+            "name": "Royal Bcode Ventures Ltd",
+            "homepage": "https://royalbv.name.ng",
+            "role": "Organization"
+        }
+    ],
+    "require": {
+        "php": "^8.1",
+        "illuminate/support": "^9.0|^10.0|^11.0|^12.0",
+        "illuminate/http": "^9.0|^10.0|^11.0|^12.0"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^7.0|^8.0|^9.0|^10.0",
+        "pestphp/pest": "^2.0|^3.0",
+        "mockery/mockery": "^1.6"
+    },
+    "autoload": {
+        "psr-4": {
+            "RoyalBcode\\AlatPay\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "RoyalBcode\\AlatPay\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "RoyalBcode\\AlatPay\\AlatPayServiceProvider"
+            ],
+            "aliases": {
+                "AlatPay": "RoyalBcode\\AlatPay\\Facades\\AlatPay"
+            }
+        }
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/pest"
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}
