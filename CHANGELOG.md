@@ -2,7 +2,7 @@
 
 All notable changes to `royalbcode/laravel-alatpay` will be documented in this file.
 
-## [1.0.1] - 2026-07-21
+## [1.0.2] - 2026-07-21
 
 ### Added
 - Payment Links: create a hosted, shareable checkout link (`AlatPay::paymentLink()->create()`) and check its status by reference (`AlatPay::paymentLink()->status()`)
