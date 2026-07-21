@@ -21,23 +21,27 @@ namespace RoyalBcode\AlatPay\Services;
 
 use RoyalBcode\AlatPay\Exceptions\AlatPayException;
 
-class BankTransferService extends AbstractService
+class PaymentLinkService extends AbstractService
 {
     /**
-     * Generate a virtual account number for a customer to pay into.
+     * NGN currency code expected by the Payment Link endpoint.
+     */
+    public const CURRENCY_NGN = 2;
+
+    /**
+     * Create a hosted payment link that can be shared with a customer.
      *
-     * @param  array{amount: float|int, currency?: string, orderId: string, description?: string, customer: array, passCharge?: bool}  $data
+     * @param  array{email: string, redirectUrl: string, amount: float|int, currency?: int, passCharge?: bool}  $data
      *
      * @throws AlatPayException
      */
-    public function generateVirtualAccount(array $data): array
+    public function create(array $data): array
     {
-        $data['businessId'] = $data['businessId'] ?? $this->client->getBusinessId();
-        $data['currency'] = $data['currency'] ?? 'NGN';
+        $data['currency'] = $data['currency'] ?? self::CURRENCY_NGN;
         $data['passCharge'] = $data['passCharge'] ?? $this->client->getPassCharge();
 
         $response = $this->client->http()->post(
-            '/bank-transfer/api/v1/bankTransfer/virtualAccount',
+            '/merchant-onboarding/api/v1/payment/initialize',
             $data
         );
 
@@ -45,14 +49,15 @@ class BankTransferService extends AbstractService
     }
 
     /**
-     * Check the status of a bank transfer transaction.
+     * Check the status of a payment made against a payment link, using the
+     * paymentReference returned when the link was created.
      *
      * @throws AlatPayException
      */
-    public function confirmTransaction(string $transactionId): array
+    public function status(string $reference): array
     {
         $response = $this->client->http()->get(
-            "/bank-transfer/api/v1/bankTransfer/transactions/{$transactionId}"
+            "/merchant-onboarding/api/v1/payment/status/{$reference}"
         );
 
         return $this->client->handleResponse($response);

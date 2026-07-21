@@ -14,3 +14,9 @@ All notable changes to `royalbcode/laravel-alatpay` will be documented in this f
 - `AlatPay` facade and container binding
 - Typed `AlatPayException` with status-code helper methods matching ALATPay's documented error codes (400, 401, 417, 422, 5xx)
 - Full Pest test suite with mocked HTTP responses
+
+## [1.0.1] - 2026-07-21
+
+### Added
+- Added Paymentlinkservice api with test.
+- Updated Bank Transfer with "passCharge" and updated test.

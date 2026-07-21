@@ -19,16 +19,17 @@
 
 namespace RoyalBcode\AlatPay;
 
-use Illuminate\Http\Client\PendingRequest;
-use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Http\Client\Response;
+use Illuminate\Http\Client\PendingRequest;
 use RoyalBcode\AlatPay\Exceptions\AlatPayException;
-use RoyalBcode\AlatPay\Services\AccountNumberService;
-use RoyalBcode\AlatPay\Services\BankTransferService;
-use RoyalBcode\AlatPay\Services\SettlementService;
-use RoyalBcode\AlatPay\Services\StaticWalletService;
-use RoyalBcode\AlatPay\Services\TransactionService;
 use RoyalBcode\AlatPay\Services\UssdService;
+use RoyalBcode\AlatPay\Services\SettlementService;
+use RoyalBcode\AlatPay\Services\TransactionService;
+use RoyalBcode\AlatPay\Services\Paymentlinkservice;
+use RoyalBcode\AlatPay\Services\StaticWalletService;
+use RoyalBcode\AlatPay\Services\BankTransferService;
+use RoyalBcode\AlatPay\Services\AccountNumberService;
 
 class AlatPay
 {
@@ -42,6 +43,8 @@ class AlatPay
 
     protected int $timeout;
 
+    protected bool $passCharge;
+
     public function __construct(array $config = [])
     {
         $this->secretKey = (string) ($config['secret_key'] ?? '');
@@ -49,6 +52,7 @@ class AlatPay
         $this->businessId = (string) ($config['business_id'] ?? '');
         $this->baseUrl = rtrim((string) ($config['base_url'] ?? 'https://apibox.alatpay.ng'), '/');
         $this->timeout = (int) ($config['timeout'] ?? 30);
+        $this->passCharge = (bool) ($config['pass_charge'] ?? false);
     }
 
     public function getSecretKey(): string
@@ -71,6 +75,18 @@ class AlatPay
         return $this->baseUrl;
     }
 
+    /**
+     * The default Fee Bearer setting: whether the transaction fee is passed
+     * on to the customer (true) or absorbed by the merchant (false).
+     *
+     * Configurable via the ALATPAY_PASS_CHARGE env variable. Individual
+     * requests can still override this per call via the `passCharge` key.
+     */
+    public function getPassCharge(): bool
+    {
+        return $this->passCharge;
+    }
+    
     /**
      * Build a pre-authenticated HTTP client pointed at the ALATPay API.
      */
@@ -132,5 +148,10 @@ class AlatPay
     public function settlements(): SettlementService
     {
         return new SettlementService($this);
+    }
+
+    public function paymentLinks(): PaymentLinkService
+    {
+        return new PaymentLinkService($this);
     }
 }

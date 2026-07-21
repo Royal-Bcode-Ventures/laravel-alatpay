@@ -75,4 +75,20 @@ return [
     */
     'timeout' => env('ALATPAY_TIMEOUT', 30),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Fee Bearer (Pass Charge)
+    |--------------------------------------------------------------------------
+    |
+    | Controls who absorbs the transaction processing fee by default.
+    |
+    | - false (default): ALATPay deducts the fee from your settlement.
+    | - true: the fee is added on top, so the customer pays principal + fee.
+    |
+    | This is used as the default `passCharge` value for requests that
+    | support it (Bank Transfer virtual accounts, Payment Links). You can
+    | still override it per request by passing `passCharge` explicitly.
+    |
+    */
+    'pass_charge' => env('ALATPAY_PASS_CHARGE', false),
 ];

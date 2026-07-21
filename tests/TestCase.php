@@ -43,5 +43,6 @@ abstract class TestCase extends Orchestra
         $app['config']->set('alatpay.business_id', 'test-business-id');
         $app['config']->set('alatpay.base_url', 'https://apibox.alatpay.ng');
         $app['config']->set('alatpay.timeout', 30);
+        $app['config']->set('alatpay.pass_charge', false);
     }
 }
