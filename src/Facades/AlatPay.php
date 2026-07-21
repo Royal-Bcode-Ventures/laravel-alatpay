@@ -22,6 +22,7 @@ namespace RoyalBcode\AlatPay\Facades;
 use Illuminate\Support\Facades\Facade;
 use RoyalBcode\AlatPay\Services\AccountNumberService;
 use RoyalBcode\AlatPay\Services\BankTransferService;
+use RoyalBcode\AlatPay\Services\PaymentLinkService;
 use RoyalBcode\AlatPay\Services\SettlementService;
 use RoyalBcode\AlatPay\Services\StaticWalletService;
 use RoyalBcode\AlatPay\Services\TransactionService;
@@ -34,9 +35,11 @@ use RoyalBcode\AlatPay\Services\UssdService;
  * @method static StaticWalletService staticWallet()
  * @method static TransactionService transactions()
  * @method static SettlementService settlements()
+ * @method static PaymentLinkService paymentLink()
  * @method static string getBusinessId()
  * @method static string getPublicKey()
  * @method static string getBaseUrl()
+ * @method static bool getPassCharge()
  *
  * @see \RoyalBcode\AlatPay\AlatPay
  */

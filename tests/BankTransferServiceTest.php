@@ -56,6 +56,43 @@ it('generates a virtual account successfully', function () {
     });
 });
 
+it('defaults passCharge to the configured Fee Bearer setting', function () {
+    Http::fake([
+        '*/bank-transfer/api/v1/bankTransfer/virtualAccount' => Http::response([
+            'status' => true,
+            'message' => 'Successful',
+            'data' => ['transactionId' => 'txn-124'],
+        ], 200),
+    ]);
+
+    AlatPay::bankTransfer()->generateVirtualAccount([
+        'amount' => 100,
+        'orderId' => 'order-2',
+        'customer' => ['email' => 'a@b.com', 'phone' => '080', 'firstName' => 'A', 'lastName' => 'B'],
+    ]);
+
+    Http::assertSent(fn ($request) => $request['passCharge'] === false);
+});
+
+it('respects an explicit passCharge override on virtual account generation', function () {
+    Http::fake([
+        '*/bank-transfer/api/v1/bankTransfer/virtualAccount' => Http::response([
+            'status' => true,
+            'message' => 'Successful',
+            'data' => ['transactionId' => 'txn-125'],
+        ], 200),
+    ]);
+
+    AlatPay::bankTransfer()->generateVirtualAccount([
+        'amount' => 100,
+        'orderId' => 'order-3',
+        'customer' => ['email' => 'a@b.com', 'phone' => '080', 'firstName' => 'A', 'lastName' => 'B'],
+        'passCharge' => true,
+    ]);
+
+    Http::assertSent(fn ($request) => $request['passCharge'] === true);
+});
+
 it('confirms a bank transfer transaction status', function () {
     Http::fake([
         '*/bank-transfer/api/v1/bankTransfer/transactions/*' => Http::response([

@@ -1,11 +1,11 @@
 # Laravel ALATPay SDK
 
-[![Latest Version](https://img.shields.io/badge/version-1.0.0-blue)](https://github.com/Royal-Bcode-Ventures/laravel-alatpay)
+[![Latest Version](https://img.shields.io/badge/version-1.0.1-blue)](https://github.com/Royal-Bcode-Ventures/laravel-alatpay)
 [![Tests](https://github.com/Royal-Bcode-Ventures/laravel-alatpay/actions/workflows/tests.yml/badge.svg)](https://github.com/Royal-Bcode-Ventures/laravel-alatpay/actions/workflows/tests.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE.md)
 [![PHP Version](https://img.shields.io/badge/php-%5E8.1-777bb4)](composer.json)
 
-An independent, open-source Laravel SDK for integrating **ALATPay** (a payment product by Wema Bank) into your Laravel application with virtual account bank transfers, USSD (Pay-with-Phone), Pay-with-Account-Number direct debit, and Static Wallets.
+An independent, open-source Laravel SDK for integrating **ALATPay** (a payment product by Wema Bank) into your Laravel application with virtual account bank transfers, USSD (Pay-with-Phone), Pay-with-Account-Number direct debit, Static Wallets, and hosted Payment Links.
 
 > **Disclaimer:** This package is an independent, community-built SDK. It is **not affiliated with, endorsed by, or maintained by Wema Bank PLC or ALATPay**. It simply wraps their publicly documented HTTP API for convenient use inside Laravel applications.
 
@@ -17,8 +17,10 @@ An independent, open-source Laravel SDK for integrating **ALATPay** (a payment p
 - 📱 **USSD (Pay with Phone)** — initiate and complete phone-based direct debits
 - 💳 **Pay with Account Number** — OTP-based direct debit from a Wema Bank account
 - 🗂 **Static Wallets** — create and manage Individual & Collection wallets, list accounts, and pull collection history
+- 🔗 **Payment Links** — generate a hosted, shareable checkout link and check its payment status
 - 📊 **Transaction Monitoring** — list/filter every transaction across all payment channels, or fetch one by ID
 - 💰 **Settlements** — retrieve and filter settlement/payout records for your business
+- 💸 **Fee Bearer (Pass Charge)** — configure, globally or per-request, whether ALATPay's transaction fee is absorbed by your business or passed on to the customer
 - ⚡️ Laravel auto-discovery, Facade, and a clean, chainable service API
 - 🧰 Built on Laravel's native `Http` client — no extra HTTP dependencies
 - ✅ Typed exceptions (`AlatPayException`) with status code, raw API context, and helper methods matching ALATPay's documented error codes
@@ -48,9 +50,12 @@ ALATPAY_PUBLIC_KEY=your-public-key
 ALATPAY_BUSINESS_ID=your-business-id
 ALATPAY_BASE_URL=https://apibox.alatpay.ng
 ALATPAY_TIMEOUT=30
+ALATPAY_PASS_CHARGE=false
 ```
 
 You can find your keys and Business ID on your ALATPay dashboard under **Settings → Business** (requires your ALATPay PIN).
+
+`ALATPAY_PASS_CHARGE` sets the default [Fee Bearer](#fee-bearer-pass-charge) behavior — leave it `false` (the default) to have ALATPay deduct the fee from your settlement, or set it to `true` to pass the fee on to the customer by default. Either way you can still override it per request.
 
 ---
 
@@ -162,7 +167,26 @@ $history = AlatPay::staticWallet()->history(['page' => 1, 'limit' => 10]);
 $details = AlatPay::staticWallet()->details($wallet['id']);
 ```
 
-### 5. Transaction Monitoring
+### 5. Payment Links
+
+```php
+// Create a hosted, shareable payment link
+$link = AlatPay::paymentLink()->create([
+    'email' => 'johndoe@gmail.com',
+    'redirectUrl' => 'https://www.mywebsite.ng/success',
+    'amount' => 100,
+    // 'currency' => \RoyalBcode\AlatPay\Services\PaymentLinkService::CURRENCY_NGN, // defaults to NGN
+    // 'passCharge' => true, // optional — overrides the ALATPAY_PASS_CHARGE default for this link
+]);
+
+$paymentUrl = $link['data']['paymentUrl'];
+$paymentReference = $link['data']['paymentReference'];
+
+// Redirect the customer to $paymentUrl, then later check the status
+$status = AlatPay::paymentLink()->status($paymentReference);
+```
+
+### 6. Transaction Monitoring
 
 ```php
 // List/filter all transactions across every payment channel
@@ -180,7 +204,7 @@ $transactions = AlatPay::transactions()->all([
 $transaction = AlatPay::transactions()->find('transaction-id');
 ```
 
-### 6. Settlements
+### 7. Settlements
 
 ```php
 // List/filter settlement (payout) records for your business
@@ -188,6 +212,29 @@ $settlements = AlatPay::settlements()->all([
     'status' => 'settled',      // optional
     'startAt' => '2026-01-01',  // optional
     'endAt' => '2026-01-31',    // optional
+]);
+```
+
+---
+
+## Fee Bearer (Pass Charge)
+
+By default, ALATPay deducts its transaction fee from your settlement. You can instead pass that fee on to the customer — the amount charged becomes principal + fee — using the `passCharge` flag.
+
+Set a global default in `.env`:
+
+```env
+ALATPAY_PASS_CHARGE=true
+```
+
+Or override it per request on any endpoint that supports it (currently Bank Transfer virtual accounts and Payment Links):
+
+```php
+AlatPay::bankTransfer()->generateVirtualAccount([
+    'amount' => 5000,
+    'orderId' => 'order-123',
+    'customer' => [...],
+    'passCharge' => true, // takes priority over ALATPAY_PASS_CHARGE for this call
 ]);
 ```
 
@@ -264,6 +311,8 @@ All HTTP calls in the test suite are mocked with Laravel's `Http::fake()` — no
 
 - [x] Transaction monitoring (list, filter, single lookup)
 - [x] Settlement records (list, filter)
+- [x] Payment Links (create, check status)
+- [x] Fee Bearer / Pass Charge configuration
 - [ ] Card payment channel
 - [ ] Webhook signature verification helper
 - [ ] Artisan command for quick credential/connectivity checks
